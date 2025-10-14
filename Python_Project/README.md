@@ -1,6 +1,6 @@
 # Overview
 This python project was created to analyze Data Analyst jobs in the United State market. Each notebook focuses different aspects of the job market, such as in-demand skills, salaries, trends, companies, and locations. 
-This projects analysis was inspired by Luke Barousse's Pythong course on [Youtube](https://www.youtube.com/watch?v=wUSDVGivd-8), with an additional self-designed question that analyzes the co-occurrence of different skills ([Skill Co-occurence](files/Skill_Cooccurrence.ipynb)).
+This projects analysis was inspired by Luke Barousse's Python course on [Youtube](https://www.youtube.com/watch?v=wUSDVGivd-8), with an additional self-designed question that analyzes the co-occurrence of different skills ([Skill Co-occurence](files/Skill_Cooccurrence.ipynb)).
 
 # The Dataset
 The dataset is the same ussed throughout Luke's course, [data set](https://huggingface.co/datasets/lukebarousse/data_jobs) and uses the following columns:
