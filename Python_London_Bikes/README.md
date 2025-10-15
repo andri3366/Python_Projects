@@ -1,7 +1,7 @@
 # London Bikes Analysis
 ## Purpose
-This project was designed to explore bike usage patterns in London, UK using the London Bike Sharing Dataset from [Kaggle](https://www.kaggle.com/datasets/hmavrodiev/london-bike-sharing-dataset). The original project, found on [Youtube](https://www.youtube.com/watch?v=nl9eZl1IOKI), explored key indicators such as total bike counts, moving average trend line, and a heatmap comparing tempurature and wind speed. I extended the project by analysing the average humidity and seasonal bike usage to provide a deeper understanding of how weather conditions influence activity.
-
+This project was designed to explore bike usage patterns in London, UK using the London Bike Sharing Dataset from [Kaggle](https://www.kaggle.com/datasets/hmavrodiev/london-bike-sharing-dataset). The original project, found on [Youtube](https://www.youtube.com/watch?v=nl9eZl1IOKI), explored key indicators such as total bike counts, moving average trend line, and a heatmap comparing temperature and wind speed. I extended the project by analyzing the average humidity and seasonal bike usage to provide a deeper understanding of how weather conditions influence activity.
+![dashboard](images/dashboard.png)
 ## Techniques
 - VS code
 - Jupyter notebooks
@@ -24,8 +24,8 @@ Key steps include:
   ```
 - Write the final dataframe to an Excel file
 ## Dashboard
-The final dahsboard is found on [Tableau](https://public.tableau.com/app/profile/andrianna.wardill/viz/LondonBikeAnalysis_17599482187410/LondonBikeAnalysis?publish=yes) public.
-
+The final dashboard is found on [Tableau](https://public.tableau.com/app/profile/andrianna.wardill/viz/LondonBikeAnalysis_17599482187410/LondonBikeAnalysis?publish=yes) public.
+![dashboard hover](images/dashboard_hover.png)
 ### Moving Average
 1. Create a string parameter for Moving Average Period and an integer param for Moving Average Duration
 2. Converted the Time table to Date & Time
@@ -39,14 +39,14 @@ The final dahsboard is found on [Tableau](https://public.tableau.com/app/profile
    - Rows: Count
 5. Create a set from the Moving Average Period
 6. Create min & max month calculated fields <br>
-  a) ```{ MIN(IF [Moving Average Period Set] THEN [Moving Average Period]END) } ```
-    - The ```{}``` are used to ensure all marks are returned
-  b) Add min and max month fields into the 'Detail' shelf and select continuous
+   - ```{ MIN(IF [Moving Average Period Set] THEN [Moving Average Period]END) } ```
+      - The ```{}``` are used to ensure all marks are returned
+   - Add min and max month fields into the 'Detail' shelf and select continuous
 7. Add worksheet action
    - Select the change set values options
    - Set the target set to Moving Average Period Set
    - Clearing the selection will should be highlighted as 'Keep set values'
-   - **Note:** When adding all the worksheets into the dashboard edit the action so the source sheet is set to the dashbord
+   - **Note:** When adding all the worksheets into the dashboard edit the action so the source sheet is set to the dashboard
 8. Create a reference band
    - Drag and drop the reference band into Table -> Moving Average Period
    - Set the band from Min Month to Max Month
@@ -118,5 +118,5 @@ The final dahsboard is found on [Tableau](https://public.tableau.com/app/profile
    - Drag the 'Clusters' into the 'Color' shelf
 5. Drag the Season table into the 'Label' shelf
 ## Future Additions
-- Add a forecasting model to preduct future bike demand
+- Add a forecasting model to predict future bike demand
 - Apply clustering to identify groups of similar days or weather patterns
