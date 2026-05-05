@@ -1,4 +1,4 @@
-# SQL_Projects
+# Python_Projects
 This Python repository contains various Python projects that demonstrate my skill and knowledge of using advance Python techniques and visualization using Tableau.
 
 ## Projects
