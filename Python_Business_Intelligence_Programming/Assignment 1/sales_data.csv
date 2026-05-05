@@ -1,0 +1,16 @@
+OrderID,Branch,Category,Product,Quantity,UnitPrice,OrderDate,CustomerID
+1001,North,Electronics,Smartphone,1,699.99,2025-01-05,501
+1002,South,Clothing,Jeans,2,45.5,2025-01-05,502
+1003,West,Groceries,Milk,4,3.99,2025-01-06,503
+1004,East,Electronics,Laptop,1,1200,2025-01-07,504
+1005,North,Clothing,T-Shirt,3,15,2025-01-07,501
+1006,South,Groceries,Bread,2,2.5,2025-01-08,505
+1007,West,Electronics,Headphones,1,150,2025-01-09,506
+1008,East,Clothing,Jacket,1,89,2025-01-10,507
+1009,North,Groceries,Apples,10,0.5,2025-01-11,508
+1010,South,Electronics,Smartwatch,2,199,2025-01-12,502
+1011,West,Clothing,Socks,5,5.99,2025-01-13,509
+1012,East,Groceries,Cereal,3,4.5,2025-01-14,510
+1013,North,Electronics,Tablet,1,350,2025-01-15,501
+1014,South,Clothing,Dress,1,65,2025-01-16,511
+1015,West,Groceries,Eggs,2,3.25,2025-01-17,512
