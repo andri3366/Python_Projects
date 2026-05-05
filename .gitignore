@@ -1,5 +1,5 @@
 .ipynb_checkpoints/
 
 # Data files from the National Address Registry are over 2GB
-# Python_Data_Engineering/National Address Registry/data/Addresses/
-# Python_Data_Engineering/National Address Registry/combined/
+Python_Data_Engineering/National Address Registry/data/Addresses/
+Python_Data_Engineering/National Address Registry/combined/

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mermaid Diagram</title>
+  </head>
+  <body>
+	<!-- Do not change anything before this line -->
+	<div class="mermaid">
+---
+title: 26W_CST2112 GA5 Load NAR
+---
+erDiagram
+
+    ga5_raw {
+        int id PK, UK
+        varchar LOC_GUID
+        varchar ADDR_GUID
+        varchar APT_NO_LABEL
+        varchar CIVIC_NO
+        varchar CIVIC_NO_SUFFIX
+        varchar OFFICIAL_STREET_NAME
+        varchar OFFICIAL_STREET_TYPE
+        varchar OFFICIAL_STREET_DIR
+        varchar PROV_CODE
+        varchar CSD_ENG_NAME
+        varchar CSD_FRE_NAME
+        varchar CSD_TYPE_ENG_CODE
+        varchar CSD_TYPE_FRE_CODE
+        varchar MAIL_STREET_NAME
+        varchar MAIL_STREET_TYPE
+        varchar MAIL_STREET_DIR
+        varchar MAIL_MUN_NAME
+        varchar MAIL_PROV_ABVN
+        varchar MAIL_POSTAL_CODE
+        varchar BG_DLS_LSD
+        varchar BG_DLS_QTR
+        varchar BG_DLS_SCTN
+        varchar BG_DLS_TWNSHP
+        varchar BG_DLS_RNG
+        varchar BG_DLS_MRD
+        varchar BG_X
+        varchar BG_Y
+        varchar BU_N_CIVIC_ADD
+        varchar BU_USE
+        varchar SOURCE_FILE 
+    }
+
+    ga5_master{
+        int id PK, UK
+        varchar LOC_GUID
+        varchar ADDR_GUID
+        varchar APT_NO_LABEL
+        varchar CIVIC_NO
+        int CIVIC_NO_SUFFIX FK
+        varchar OFFICIAL_STREET_NAME
+        int OFFICIAL_STREET_TYPE FK
+        int OFFICIAL_STREET_DIR FK
+        varchar PROV_CODE
+        varchar CSD_ENG_NAME
+        varchar CSD_FRE_NAME
+        int CSD_TYPE_ENG_CODE FK
+        int CSD_TYPE_FRE_CODE FK
+        varchar MAIL_STREET_NAME
+        varchar MAIL_STREET_TYPE
+        int MAIL_STREET_DIR FK
+        varchar MAIL_MUN_NAME
+        int MAIL_PROV_ABVN FK
+        varchar MAIL_POSTAL_CODE
+        varchar BG_DLS_LSD
+        varchar BG_DLS_QTR
+        varchar BG_DLS_SCTN
+        varchar BG_DLS_TWNSHP
+        varchar BG_DLS_RNG
+        varchar BG_DLS_MRD
+        varchar BG_X
+        varchar BG_Y
+        varchar BU_N_CIVIC_ADD
+        varchar BU_USE
+        int SOURCE_FILE FK
+    }
+
+    ga5_lookup_info{
+        integer id_column PK,UK
+        string code1 FK "code1+code2"
+        string code2 FK "code1+code2"
+        string descr
+    }
+    
+    ga5_master ||--o{ ga5_lookup_info : "" 
+	</div>
+	<!-- Do not change anything after this line -->
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    </script>
+  </body>
+</html>

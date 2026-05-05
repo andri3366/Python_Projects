@@ -1,0 +1,45 @@
+export const diagram = '
+erDiagram
+
+    ga3_raw{
+      integer id_column PK,UK
+      string filename
+      string file_path
+      int file_size
+      string camera_make
+      string camera_model
+      string datetime_original
+      string exif_metadata
+      string iptc_metadata
+      string xmp_metadata
+    }
+
+    ga3_master{
+        integer image_id PK,UK,FK
+        string filename
+        string file_path
+        int file_size
+        datetime datetime_original
+        camera_make int fk
+        camera_model int fk
+    }
+
+    ga3_metadata{
+        integer image_tag_id PK,UK
+        int image_id FK
+        string metadata_type
+        string metadata_name
+        string metadata_subname
+        string metadata_value
+    }
+
+    ga3_camera_lookup{
+        integer lookup_id PK,UK
+        string code1 fk "code1+code2"
+        int code2 fk "code1+code2"
+        string description
+    }
+    
+    ga3_master ||--|{ ga3_metadata : ""
+    ga3_master ||--o{ ga3_camera_lookup : "" 
+';
