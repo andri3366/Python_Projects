@@ -4,9 +4,14 @@ import joblib
 from scipy.sparse import hstack
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import MinMaxScaler
 
+from sklearn.linear_model import LogisticRegression
+# from sklearn.preprocessing import MinMaxScaler
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+from sklearn.naive_bayes import MultinomialNB
+
+from sklearn.metrics import f1_score 
 from src.preprocess import clean_text
 
 df = pd.read_csv('../data/fake_job_postings_cleaned.csv')
@@ -31,6 +36,16 @@ df = pd.read_csv('../data/fake_job_postings_cleaned.csv')
     [Target variable]
     - fraudulent 
 '''
+
+models = {
+    "Logistic Regression": LogisticRegression(class_weight='balanced', max_iter=1000),
+    "Random Forest": RandomForestClassifier(class_weight='balanced', n_estimators=100, random_state=42),
+    "XGBoost": XGBClassifier(scale_pos_weight=1, n_estimators=100, random_state=42),
+    "Naive Bayes": MultinomialNB()
+                             
+}
+
+splits = [0.3, 0.2, 0.15]
 
 # Combine the text
 df['combined_text'] = (
@@ -59,13 +74,45 @@ cat_features = pd.get_dummies(df[cat_columns], drop_first=True)
 X = hstack([text_features, binary_features, cat_features])
 y = df['fraudulent']
 
-# Modeling
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+result = []
+best_model = None
+best_model_name = None
+best_f1 = 0
+best_split = None
 
-model = LogisticRegression(class_weight='balanced', max_iter=1000).fit(X_train, y_train)
-
-pred = model.predict(X_test)
+for split in splits:
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=split, random_state=42, stratify=y)
     
-joblib.dump(model, '../model/lr_model.pkl')
-joblib.dump(vectorizer, '../model/lr_vectorizer.pkl')
-joblib.dump(cat_features.columns, '../model/lr_cat_features.pkl')
+    for model_name, model in models.items():
+        model.fit(X_train, y_train)
+        pred = model.predict(X_test)
+        
+        f1 = f1_score(y_test, pred, zero_division=0)
+        
+        result.append({
+            'model': model_name,
+            'split': split,
+            'f1_score': f1
+        })
+        
+        if f1 > best_f1:
+            best_f1 = f1
+            best_model = model_name
+            best_model_name = model_name
+            best_split = split
+        
+result_df = pd.DataFrame(result)
+print("Model Results: ")
+print(result_df.sort_values(by='f1_score', ascending=False))
+
+print(f"Best Model: {best_model_name} with F1 Score: {best_f1} at split: {best_split}")
+# Modeling
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# model = LogisticRegression(class_weight='balanced', max_iter=1000).fit(X_train, y_train)
+
+# pred = model.predict(X_test)
+    
+joblib.dump(best_model, '../model/best_model.pkl')
+joblib.dump(vectorizer, '../model/vectorizer.pkl')
+joblib.dump(cat_features.columns, '../model/cat_features.pkl')

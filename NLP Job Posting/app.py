@@ -14,9 +14,9 @@ from src.predict import predict_posting
 #     cat_columns = joblib.load(f)
 
 base_dir = os.path.dirname(__file__)
-model_path = os.path.join(base_dir, 'model/lr_model.pkl')
-vectorizer_path = os.path.join(base_dir, 'model/lr_vectorizer.pkl')
-cat_features_path = os.path.join(base_dir, 'model/lr_cat_features.pkl')
+model_path = os.path.join(base_dir, 'model/best_model.pkl')
+vectorizer_path = os.path.join(base_dir, 'model/vectorizer.pkl')
+cat_features_path = os.path.join(base_dir, 'model/cat_features.pkl')
 
 model = joblib.load(model_path)
 vectorizer = joblib.load(vectorizer_path)
