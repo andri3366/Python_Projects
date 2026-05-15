@@ -24,15 +24,6 @@ df = pd.read_csv('../data/fake_job_postings_cleaned.csv')
     - description
     - requirements
     - benefits
-    [Binary features]
-    - telecommuting
-    - has_company_logo
-    - has_questions
-    [Categorical features]
-    - enrollment_type
-    - required_experience
-    - required_education
-    - country
     [Target variable]
     - fraudulent 
 '''
@@ -59,19 +50,11 @@ df['combined_text'] = (
 df['combined_text'] = df['combined_text'].apply(clean_text)
 
 # Apply TF-IDF
-vectorizer = TfidfVectorizer(max_features=1000)
-text_features = vectorizer.fit_transform(df['combined_text'])
-
-# Handle binary features
-binary_features = df[['telecommuting', 'has_company_logo', 'has_questions']]
-
-# Handle categorical features
-cat_columns = ['employment_type', 'required_experience', 'required_education', 'country']
-cat_features = pd.get_dummies(df[cat_columns], drop_first=True)
-
+text_vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))
+text_features = text_vectorizer.fit_transform(df['combined_text'])
 
 # Combine all features
-X = hstack([text_features, binary_features, cat_features])
+X = text_features
 y = df['fraudulent']
 
 result = []
@@ -113,6 +96,5 @@ print(f"Best Model: {best_model_name} with F1 Score: {best_f1} at split: {best_s
 
 # pred = model.predict(X_test)
     
-joblib.dump(best_model, '../model/best_model.pkl')
-joblib.dump(vectorizer, '../model/vectorizer.pkl')
-joblib.dump(cat_features.columns, '../model/cat_features.pkl')
+joblib.dump(best_model, '../model/text_best_model.pkl')
+joblib.dump(text_vectorizer, '../model/text_vectorizer.pkl')

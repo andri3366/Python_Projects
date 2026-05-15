@@ -1,12 +1,12 @@
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from src.preprocess import clean_text
 import joblib
-from scipy.sparse import hstack
+from scipy.sparse import hstack, csr_matrix
 import pandas as pd
 
-model = joblib.load('model/lr_model.pkl')
-vectorizer = joblib.load('model/lr_vectorizer.pkl')
-cat_columns = joblib.load('model/lr_cat_features.pkl')
+model = joblib.load('model/best_model.pkl')
+vectorizer = joblib.load('model/vectorizer.pkl')
+cat_columns = joblib.load('model/cat_features.pkl')
 
 def evaluate_model(model, X_test, y_test):
     pred = model.predict(X_test)
@@ -42,7 +42,11 @@ def predict_posting(text, telecommuting, has_company_logo, has_questions, employ
     cat_features_training = cat_features_encoded.reindex(columns=cat_columns, fill_value=0)
     cat_features_training = cat_features_training.astype(int)
     
-    X = hstack([text_features, binary_features, cat_features_training])
+    # needed to sparse the values as XGBoost often requires consistent sparse types
+    binary_features_sparse = csr_matrix(binary_features.values)
+    cat_features_sparse = csr_matrix(cat_features_training.values)
+    
+    X = hstack([text_features, binary_features_sparse, cat_features_sparse])
     
     prediction = model.predict(X)[0]
     probability = model.predict_proba(X)[0]
