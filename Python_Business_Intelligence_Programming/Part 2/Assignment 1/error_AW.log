@@ -1,8 +1,4 @@
-ERROR:root:map_data: 'int' object is not iterable
-ERROR:root:filter_data: 'NoneType' object is not iterable
-ERROR:root:reduce_data: reduce() arg 2 must support iteration
-ERROR:root:filter_data: 'int' object is not iterable
-ERROR:root:reduce_data: reduce() arg 2 must support iteration
-ERROR:root:map_data: 'int' object is not iterable
-ERROR:root:filter_data: 'int' object is not iterable
-ERROR:root:reduce_data: reduce() of empty iterable with no initial value
+2026-06-03 14:13:35,233 - ERROR - reduce_data: reduce() of empty iterable with no initial value
+2026-06-03 14:15:56,701 - ERROR - reduce_data: reduce() of empty iterable with no initial value
+2026-06-03 14:16:13,312 - ERROR - reduce_data: reduce() of empty iterable with no initial value
+2026-06-03 14:18:53,919 - ERROR - gen_data: Must be of type int
