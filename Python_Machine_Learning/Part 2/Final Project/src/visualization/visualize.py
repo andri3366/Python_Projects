@@ -50,6 +50,15 @@ def create_report(dataset_name, model, X, df):
                     r.savefig(fig)
                     plt.close(fig)
                     
+                if plot["type"] == "countplot":
+                    fig = single_bar(
+                        df, 
+                        plot["x"]
+                    )
+                    
+                    r.savefig(fig)
+                    plt.close(fig)
+                    
             if hasattr(model, "feature_importances_"):
                 
                 print("Creating feature")
@@ -104,6 +113,14 @@ def plot_corr_heatmap(df):
     
     ax.set_title("Correlation Matrix")
     
+    return fig
+
+def single_bar(df, x):
+    
+    fig, ax = plt.subplots()
+    sns.countplot(data=df, x=x)
+    
+    ax.set_title(f"Count Plot of {x}")
     return fig
 
 def plot_feature_importance(model, X):

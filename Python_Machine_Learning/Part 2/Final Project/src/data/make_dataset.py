@@ -12,9 +12,9 @@ def load_and_preprocess_data(data_path):
     for col in df.columns:
         
         if pd.api.types.is_numeric_dtype(df[col]):
-            df[col].fillna(df[col].median())
+            df[col] = df[col].fillna(df[col].median())
         else:
-            df[col].fillna(df[col].mode()[0])
+            df[col] = df[col].fillna(df[col].mode()[0])
             
     # handle based on file
     file_name = os.path.basename(data_path)
@@ -28,6 +28,13 @@ def load_and_preprocess_data(data_path):
         
         # save file
         df.to_csv('data/processed/cleaned_real_estate.csv', index=None)
+    elif file_name == "credit.csv":
+           # Special conversion
+        df['Credit_History'] = df['Credit_History'].astype('object')
+        df['Loan_Amount_Term'] = df['Loan_Amount_Term'].astype('object')
+        
+        df.to_csv('data/processed/cleaned_credit.csv', index=None)
+
     else:
         data_output = "data/processed/"
         clean_name = "cleaned_" + file_name

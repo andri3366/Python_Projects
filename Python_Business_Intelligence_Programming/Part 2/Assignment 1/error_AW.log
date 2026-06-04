@@ -2,3 +2,19 @@
 2026-06-03 14:15:56,701 - ERROR - reduce_data: reduce() of empty iterable with no initial value
 2026-06-03 14:16:13,312 - ERROR - reduce_data: reduce() of empty iterable with no initial value
 2026-06-03 14:18:53,919 - ERROR - gen_data: Must be of type int
+2026-06-04 19:36:30,374 - ERROR - gen_data: Must be of type int
+2026-06-04 19:38:20,892 - ERROR - gen_data: Must be of type int
+2026-06-04 19:38:45,875 - ERROR - gen_data: Must be of type int
+2026-06-04 19:38:52,462 - ERROR - gen_data: Must be of type int
+2026-06-04 19:39:13,185 - ERROR - gen_data: Must be of type int
+2026-06-04 19:40:46,693 - ERROR - gen_data: Must be of type int
+2026-06-04 19:40:46,695 - ERROR - map_data: 'NoneType' object is not iterable
+2026-06-04 19:41:08,658 - ERROR - gen_data: Must be of type int
+2026-06-04 19:41:08,659 - ERROR - map_data: 'NoneType' object is not iterable
+2026-06-04 19:41:28,519 - ERROR - gen_data: Must be of type int
+2026-06-04 19:42:03,020 - ERROR - gen_data: Start cannot be greater than stop
+2026-06-04 19:44:44,686 - ERROR - reduce_data: reduce() of empty iterable with no initial value
+2026-06-04 19:46:07,449 - ERROR - reduce_data: reduce() of empty iterable with no initial value
+2026-06-04 19:46:21,761 - ERROR - reduce_data: reduce() of empty iterable with no initial value
+2026-06-04 19:47:41,634 - ERROR - filter_data: 'NoneType' object is not iterable
+2026-06-04 19:48:02,412 - ERROR - reduce_data: reduce() arg 2 must support iteration

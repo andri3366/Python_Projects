@@ -38,5 +38,21 @@ datasets = {
                 "df" : "lot_size"
             }
         ]
+    },
+    "loan_eligibility" : {
+        "raw_path": "data/raw/credit.csv",
+        "cleaned_path": "data/processed/cleaned_credit.csv",
+        "final_path": "data/processed/final_credit.csv",
+        "target": "Loan_Approved",
+        "plot" : [
+            {
+                "type" : "countplot",
+                "x" : "Loan_Approved"
+            },
+            {
+                "type" : "distplot",
+                "x" : "LoanAmount"
+            }
+        ]   
     }
 }

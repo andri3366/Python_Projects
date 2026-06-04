@@ -1,6 +1,7 @@
 import pandas as pd
 import os 
 
+# Feature engineering
 def create_dummy_var(data_path):
     
     df = pd.read_csv(data_path)
@@ -16,7 +17,12 @@ def create_dummy_var(data_path):
         # interaction features
         df['property_age'] = df.year_sold - df.year_built
         df.drop(index=df[df.property_age<0].index, inplace=True)
+    
+    if file_name == "cleaned_credit.csv":
         
+        df = df.drop('Loan_ID', axis=1)
+        
+        df['Loan_Approved'] = df['Loan_Approved'].replace({'Y':1, 'N':0}).astype(int)
     
     cat_cols = df.select_dtypes(exclude=['number']).columns
     df = pd.get_dummies(df, columns=cat_cols, drop_first=True).astype(int)
