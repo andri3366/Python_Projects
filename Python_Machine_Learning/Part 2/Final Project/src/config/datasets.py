@@ -4,6 +4,24 @@ datasets = {
         "cleaned_path": "data/processed/cleaned_real_estate.csv",
         "final_path": "data/processed/final_real_estate.csv",
         "target": "price",
+        "scale" : False,
+        "scaler" : None,
+        "test_size" : 0.2,
+        "random_state" : 123,
+        "problem_type" : "regression",
+        "models" : [
+            {
+                "name" : "LinearRegression",
+                "kwargs": {}
+            },
+            {
+                "name" : "RandomForestRegressor",
+                "kwargs" : {
+                    "n_estimators" : 200,
+                    "criterion" : "absolute_error"
+                }
+            }
+        ],
         "plot": [
             {
                 "type" : "scatterplot",
@@ -44,6 +62,27 @@ datasets = {
         "cleaned_path": "data/processed/cleaned_credit.csv",
         "final_path": "data/processed/final_credit.csv",
         "target": "Loan_Approved",
+        "scale" : True,
+        "scaler" : "minmax",
+        "test_size" : 0.2,
+        "random_state" : 123,
+        "problem_type" : "classification",
+        "models" : [
+            {
+                "name" : "LogisticRegression",
+                "kwargs" : {},
+                "cv" : 5
+            },
+            {
+                "name" : "DecisionTreeClassifier",
+                "kwargs" : {}
+            },
+            {
+                "name" : "RandomForestClassifier",
+                "kwargs" : {},
+                "cv" : 5
+            }
+        ],
         "plot" : [
             {
                 "type" : "countplot",
