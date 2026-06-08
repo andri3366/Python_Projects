@@ -93,5 +93,38 @@ datasets = {
                 "x" : "LoanAmount"
             }
         ]   
+    },
+
+    "mall_customers" : {
+        "raw_path": "data/raw/mall_customers.csv",
+        "cleaned_path": "data/processed/cleaned_mall_customers.csv",
+        "final_path": "data/processed/final_mall_customers.csv",
+        "target": [
+            {
+                "name" : "income_spending",
+                "features" : [
+                    "Annual_Income",
+                    "Spending_Score"
+                ]
+            },
+            {
+                "name" : "income_spending_age",
+                "features" : [
+                    "Annual_Income",
+                    "Spending_Score",
+                    "Age"
+                ]
+            }
+        ],
+        "scale" : False,
+        "problem_type" : "clustering",
+        "models" : [
+            {
+                "name" : "KMeans",
+                "clusters" : [3,5],
+                "cluster_range" : [3,9],
+                "kwargs" : {}
+            }
+        ]
     }
 }

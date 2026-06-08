@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.cluster import KMeans
 import pickle
 
 def train_lr(X, y, data):
@@ -43,7 +44,8 @@ models = {
     "LogisticRegression": LogisticRegression,
     "DecisionTreeClassifier" : DecisionTreeClassifier,
     "RandomForestRegressor": RandomForestRegressor,
-    "RandomForestClassifier": RandomForestClassifier    
+    "RandomForestClassifier": RandomForestClassifier,
+    "KMeans" : KMeans
 }
 def prep_model(X, y, config):
     
@@ -63,7 +65,22 @@ def prep_model(X, y, config):
         
     return X_train, X_test, y_train, y_test, scaler
 
-def train_model(X_train, y_train, dataset_name, model_config):
+def prep_cluster(X, config):
+
+    scaler = None
+
+    if config.get("scale"):
+
+        if config.get("scaler") == "standard":
+            scaler = StandardScaler()
+        else:
+            scaler = MinMaxScaler()
+        
+    X = scaler.fit_transform()
+
+    return X, scaler
+
+def train_model(X_train, y_train, dataset_name, model_config, feature_name=None, save_model=True):
     
     model_class = models[model_config["name"]]
     
@@ -71,13 +88,24 @@ def train_model(X_train, y_train, dataset_name, model_config):
         **model_config.get("kwargs", {})
     )
     
-    final_model = model.fit(X_train, y_train)
+    if y_train is None:
+        final_model = model.fit(X_train)
+    else:
+        final_model = model.fit(X_train, y_train)
+    # final_model = model.fit(X_train, y_train)
     
-    file_path = 'models/model_'
-    file_extension = '.pkl'
-    file_name = file_path + model_config["name"] + "_" + dataset_name + file_extension
-    with open(file_name, 'wb') as f:
-        pickle.dump(final_model, f)
+    if save_model:
+        if feature_name:
+            file_path = 'models/model_'
+            file_extension = '.pkl'
+            file_name = file_path + model_config["name"] + "_" + dataset_name + feature_name + file_extension
+        else:
+            file_path = 'models/model_'
+            file_extension = '.pkl'
+            file_name = file_path + model_config["name"] + "_" + dataset_name +  file_extension
+
+        with open(file_name, 'wb') as f:
+            pickle.dump(final_model, f)
         
     return model
     

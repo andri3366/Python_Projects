@@ -3,7 +3,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 import seaborn as sns
 import numpy as np
 
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, silhouette_score
 from src.config.datasets import datasets
 
 def create_report(dataset_name, model, X, df):
@@ -66,6 +66,78 @@ def create_report(dataset_name, model, X, df):
                 r.savefig(fig)
                 plt.close(fig)
                     
+def create_cluster_report(pdf, model, X, feature_name, n_clusters):
+    
+    if X.shape[1] == 2:
+
+        fig = cluster_scatter(X, model.labels_, model.cluster_centers_, feature_name, n_clusters)
+
+        pdf.savefig(fig)
+        plt.close(fig)
+
+    else:
+        return None
+
+def create_cluster_metrics(pdf, cluster_range, inertia, sil, feature_name):
+
+    fig = elbow_plot(cluster_range, inertia, feature_name)
+
+    pdf.savefig(fig)
+    plt.close(fig)
+
+    fig = silhouette_plot(cluster_range, sil, feature_name)
+
+    pdf.savefig(fig)
+    plt.close(fig)
+
+def create_pair(r, df):
+    
+    g = sns.pairplot(df)
+
+    r.savefig(g.figure)
+    plt.close(g.figure)
+
+def cluster_scatter(X, labels, centers, feature_name, n_clusters):
+    fig, ax = plt.subplots()
+    
+    sns.scatterplot(
+            x=X.iloc[:,0],
+            y=X.iloc[:,1],
+            hue=labels,
+            palette="tab10",
+            ax=ax
+        )
+    plt.scatter(centers[:,0], centers[:,1], c='black', s=200, alpha=0.5)
+
+    ax.set_xlabel(X.columns[0])
+    ax.set_ylabel(X.columns[1])
+    ax.set_title(f"KMeans {n_clusters} Clusters for {feature_name}")
+
+    return fig
+
+def elbow_plot(cluster_range, inertias, feature_name):
+
+    fig, ax = plt.subplots()
+
+    ax.plot(cluster_range, inertias, marker='o')
+
+    ax.set_xlabel("Number of Clusters")
+    ax.set_ylabel("Inertia")
+    ax.set_title(f"KMeans {feature_name} Elbow Method")
+
+    return fig
+
+def silhouette_plot(cluster_range, silhouettes, feature_name):
+
+    fig, ax = plt.subplots()
+
+    ax.plot(cluster_range, silhouettes, marker='o')
+
+    ax.set_xlabel("Number of Clusters")
+    ax.set_ylabel("Silhouette Score")
+    ax.set_title(f"KMeans {feature_name} Silhouette Method")
+
+    return fig
 
 def plot_scatter(df, x, y):
     
