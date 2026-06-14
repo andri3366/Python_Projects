@@ -1,0 +1,2 @@
+Word Count of data.txt: 16
+Line count of data.txt: 5
