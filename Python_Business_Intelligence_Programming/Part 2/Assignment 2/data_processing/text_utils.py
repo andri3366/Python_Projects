@@ -1,6 +1,6 @@
 
 
-def len(str):
+def length(str):
     
     return len(str)
 
