@@ -6,8 +6,10 @@ datasets = {
         "target": "price",
         "scale" : False,
         "scaler" : None,
-        "test_size" : 0.2,
-        "random_state" : 123,
+        "train_test_split" : {
+            "test_size" : 0.2,
+            "random_state" : 123
+        },
         "problem_type" : "regression",
         "models" : [
             {
@@ -25,34 +27,41 @@ datasets = {
         "plot": [
             {
                 "type" : "scatterplot",
+                "data" : "raw",
                 "x" : "sqft",
                 "y" : "price"
             },
             {
                 "type" : "scatterplot",
+                "data" : "raw",
                 "x" : "price",
                 "y" : "year_built"
             },
             {
                 "type" : "scatterplot",
+                "data" : "raw",
                 "y" : "property_tax",
                 "x" : "insurance"
             },
             {
                 "type" : "boxplot",
+                "data" : "raw",
                 "y" : "property_type",
                 "x" : "sqft"
             },
             {
                 "type" : "boxplot",
+                "data" : "raw",
                 "y" : "property_type",
                 "x" : "price"
             },
             {
-                "type" : "heatmap"
+                "type" : "heatmap",
+                "data" : "raw",
             },
             {
                 "type" : "histplot",
+                "data" : "raw",
                 "df" : "lot_size"
             }
         ]
@@ -64,8 +73,10 @@ datasets = {
         "target": "Loan_Approved",
         "scale" : True,
         "scaler" : "minmax",
-        "test_size" : 0.2,
-        "random_state" : 123,
+        "train_test_split" : {
+            "test_size" : 0.2,
+            "random_state" : 123
+        },
         "problem_type" : "classification",
         "models" : [
             {
@@ -86,10 +97,12 @@ datasets = {
         "plot" : [
             {
                 "type" : "countplot",
+                "data" : "raw",
                 "x" : "Loan_Approved"
             },
             {
                 "type" : "distplot",
+                "data" : "raw",
                 "x" : "LoanAmount"
             }
         ]   
@@ -126,5 +139,63 @@ datasets = {
                 "kwargs" : {}
             }
         ]
+    },
+    
+    "ucla_nn" : {
+        "raw_path": "data/raw/admission.csv",
+        "cleaned_path": "data/processed/cleaned_admission.csv",
+        "final_path": "data/processed/final_admission.csv",
+        "target": "Admit_Chance",
+        "scale" : True,
+        "scaler" : "minmax",
+        "train_test_split" : {
+            "test_size" : 0.2,
+            "random_state" : 123,
+            "stratify" : True
+        },
+        "problem_type" : "classification",
+        "models" : [
+            {
+                "name" : "MLPClassifier",
+                "kwargs" : {
+                        "hidden_layer_sizes" : 3,
+                        "batch_size" : 50,
+                        "max_iter" : 200,
+                        "random_state" : 123
+                    }
+            },
+            {
+                "name" : "MLPClassifier",
+                "kwargs" : {
+                        "hidden_layer_sizes" : 3,
+                        "batch_size" : 50,
+                        "max_iter" : 200,
+                        "random_state" : 123,
+                        "activation" : "tanh"
+                    }
+            }
+        ],
+        "plot" : [
+            {
+                "type" : "scatterplot",
+                "data" : "processed",
+                "x" : "GRE_Score",
+                "y" : "TOEFL_Score",
+                "hue" : "Admit_Chance"
+            },
+            {
+                "type" : "distplot",
+                "data" : "processed",
+                "x" : 'GRE_Score',
+                "compare_scaled" : True
+            },
+            {
+                "type" : "distplot",
+                "data" : "processed",
+                "x" : "TOEFL_Score",
+                "compare_scaled" : True
+            }
+            
+        ]   
     }
 }

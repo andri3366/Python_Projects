@@ -24,6 +24,9 @@ def create_dummy_var(data_path):
         
         df['Loan_Approved'] = df['Loan_Approved'].replace({'Y':1, 'N':0}).astype(int)
     
+    if file_name == "cleaned_admission.csv":
+        
+        df = df.drop('Serial_No', axis=1)
     cat_cols = df.select_dtypes(exclude=['number']).columns
     df = pd.get_dummies(df, columns=cat_cols, drop_first=True).astype(int)
     

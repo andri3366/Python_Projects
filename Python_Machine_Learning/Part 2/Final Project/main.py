@@ -28,11 +28,16 @@ if __name__ == "__main__":
             X = df.drop(config["target"], axis=1)
             y = df[config["target"]]
             
-            X_train, X_test, y_train, y_test, scaler = prep_model(X,y,config)
+            X_train, X_test, y_train, y_test, scaler, X_scaled = prep_model(X,y,config)
 
-            for model_config in config["models"]:
+            trained_models = []
+            
+            for i, model_config in enumerate(config["models"]):
                 
-                model = train_model(X_train, y_train, dataset_name, model_config)
+                
+                model = train_model(X_train, y_train, dataset_name, model_config, model_index=i)
+                
+                trained_models.append(model)
                 
                 metric = eval_model(model, X_test, y_test, config["problem_type"])
                 print(f"{type(model).__name__} Metrics: {metric}")
@@ -52,7 +57,7 @@ if __name__ == "__main__":
             # elif dataset_name == "loan_eligibility":
             #     model, x_test, y_test = train_lr(X,y, dataset_name)
 
-            create_report(dataset_name, model, X, eda)
+            create_report(dataset_name, trained_models, X, eda, df, X_scaled)
 
         elif config["problem_type"] == "clustering":
 

@@ -34,7 +34,14 @@ def load_and_preprocess_data(data_path):
         df['Loan_Amount_Term'] = df['Loan_Amount_Term'].astype('object')
         
         df.to_csv('data/processed/cleaned_credit.csv', index=None)
-
+    elif file_name == "admission.csv":
+        
+        df['Admit_Chance']=(df['Admit_Chance'] >=0.8).astype(int)
+        
+        df['University_Rating'] = df['University_Rating'].astype('object')
+        df['Research'] = df['Research'].astype('object')
+        
+        df.to_csv('data/processed/cleaned_admission.csv', index=None)
     else:
         data_output = "data/processed/"
         clean_name = "cleaned_" + file_name

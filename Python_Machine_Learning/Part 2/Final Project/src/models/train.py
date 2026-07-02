@@ -4,7 +4,9 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.cluster import KMeans
+from sklearn.neural_network import MLPClassifier
 import pickle
+import pandas as pd
 
 def train_lr(X, y, data):
     
@@ -45,13 +47,20 @@ models = {
     "DecisionTreeClassifier" : DecisionTreeClassifier,
     "RandomForestRegressor": RandomForestRegressor,
     "RandomForestClassifier": RandomForestClassifier,
-    "KMeans" : KMeans
+    "KMeans" : KMeans,
+    "MLPClassifier" : MLPClassifier
 }
 def prep_model(X, y, config):
     
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=config["test_size"], random_state=config["random_state"])
+    split_kwargs = config["train_test_split"].copy()
+    
+    if "stratify" in split_kwargs:
+        split_kwargs["stratify"] = y
+        
+    X_train, X_test, y_train, y_test = train_test_split(X, y, **split_kwargs)
 
     scaler = None
+    X_scaled = None
     
     if config.get("scale") :
         
@@ -63,7 +72,12 @@ def prep_model(X, y, config):
         X_train = scaler.fit_transform(X_train)
         X_test = scaler.transform(X_test)
         
-    return X_train, X_test, y_train, y_test, scaler
+        X_scaled = pd.DataFrame(
+            X_train,
+            columns=X.columns
+        )
+        
+    return X_train, X_test, y_train, y_test, scaler, X_scaled
 
 def prep_cluster(X, config):
 
@@ -80,7 +94,7 @@ def prep_cluster(X, config):
 
     return X, scaler
 
-def train_model(X_train, y_train, dataset_name, model_config, feature_name=None, save_model=True):
+def train_model(X_train, y_train, dataset_name, model_config, feature_name=None, save_model=True, model_index=None):
     
     model_class = models[model_config["name"]]
     
@@ -97,13 +111,15 @@ def train_model(X_train, y_train, dataset_name, model_config, feature_name=None,
     if save_model:
         if feature_name:
             file_path = 'models/model_'
-            file_extension = '.pkl'
-            file_name = file_path + model_config["name"] + "_" + dataset_name + feature_name + file_extension
+            file_name = file_path + model_config["name"] + "_" + dataset_name + feature_name 
         else:
             file_path = 'models/model_'
-            file_extension = '.pkl'
-            file_name = file_path + model_config["name"] + "_" + dataset_name +  file_extension
+            file_name = file_path + model_config["name"] + "_" + dataset_name
 
+        if model_index is not None:
+            file_name += f"_{model_index}"
+        
+        file_name += ".pkl"
         with open(file_name, 'wb') as f:
             pickle.dump(final_model, f)
         

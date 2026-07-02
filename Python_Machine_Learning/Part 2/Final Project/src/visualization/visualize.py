@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score, confusion_matrix, silhouette_score
 from src.config.datasets import datasets
 
-def create_report(dataset_name, model, X, df):
+def create_report(dataset_name, models, X, raw_df, processed_df, scaled_df):
     
     config = datasets[dataset_name]
     pdf = PdfPages(f"{dataset_name}_report.pdf")
@@ -14,11 +14,18 @@ def create_report(dataset_name, model, X, df):
     with pdf as r:
             print(f"Saving: reports/{dataset_name}")
             for plot in config["plot"]:
+                
+                if plot.get("data", "raw") == "raw":
+                    df = raw_df
+                else:
+                    df = processed_df
+                    
                 if plot["type"] == "scatterplot":
                     fig = plot_scatter(
                         df,
                         plot["x"],
-                        plot["y"]
+                        plot["y"],
+                        plot.get("hue", None)
                     )
                         
                     r.savefig(fig)
@@ -58,13 +65,32 @@ def create_report(dataset_name, model, X, df):
                     
                     r.savefig(fig)
                     plt.close(fig)
-                    
-            if hasattr(model, "feature_importances_"):
                 
-                print("Creating feature")
-                fig = plot_feature_importance(model, X)
-                r.savefig(fig)
-                plt.close(fig)
+                if plot["type"] == "distplot":
+                    fig = dist(
+                        df,
+                        scaled_df,
+                        x=plot["x"],
+                        compare_scaled=plot.get("compare_scaled", False)
+                    )
+                    
+                    r.savefig(fig)
+                    plt.close(fig)
+            
+            for model, model_config in zip(models, config["models"]):
+                
+                if hasattr(model, "feature_importances_"):
+                    
+                    print("Creating feature")
+                    fig = plot_feature_importance(model, X)
+                    r.savefig(fig)
+                    plt.close(fig)
+                    
+                if hasattr(model, "loss_curve_"):
+                    print("Plotting loss curve")
+                    fig = plot_loss_curve(model, title=f"Activation: {model_config["kwargs"].get('activation', 'relu')}")
+                    r.savefig(fig)
+                    plt.close(fig)
                     
 def create_cluster_report(pdf, model, X, feature_name, n_clusters):
     
@@ -139,11 +165,14 @@ def silhouette_plot(cluster_range, silhouettes, feature_name):
 
     return fig
 
-def plot_scatter(df, x, y):
+def plot_scatter(df, x, y, hue):
     
     fig, ax = plt.subplots()
     
-    sns.scatterplot(x=x, y=y, data=df, ax=ax)
+    if hue is None:
+        sns.scatterplot(x=x, y=y, data=df, ax=ax)       
+    else:
+        sns.scatterplot(x=x, y=y, hue=hue, data=df, ax=ax)
     
     ax.set_title(f"Scatter plot {x} to {y}")
     ax.set_ylabel(f"{y}")
@@ -195,6 +224,29 @@ def single_bar(df, x):
     ax.set_title(f"Count Plot of {x}")
     return fig
 
+def dist(og_df, scaled_df, x, compare_scaled=False):
+    
+    
+    if compare_scaled:
+        fig, (ax1, ax2)= plt.subplots(1,2, figsize=(10,4))
+        sns.histplot(
+            data = og_df, x=x, kde=True, stat="density", ax=ax1
+        )
+        
+        sns.histplot(
+            data = scaled_df, x=x, kde=True, stat="density", ax=ax2
+        )
+        ax2.set_title(f"Scaled {x}")
+        ax1.set_title(f"Original {x}")
+    
+    else:
+        fig, ax = plt.subplots()
+        sns.histplot(
+            data = og_df, x=x, kde=True, stat="density", ax=ax
+        )
+        
+        ax.set_title(f"Original {x}")
+    return fig
 def plot_feature_importance(model, X):
     
     fig, ax = plt.subplots()
@@ -208,5 +260,17 @@ def plot_feature_importance(model, X):
     
     ax.set_title(f"{type(model).__name__} Feature Importance")
     plt.tight_layout()
+    
+    return fig
+
+def plot_loss_curve(model, title):
+    fig, ax = plt.subplots()
+    
+    ax.plot(model.loss_curve_, label='Loss', color='blue')
+    
+    ax.set_xlabel("Iteration")
+    ax.set_ylabel("Loss")
+    ax.set_title(title)
+    ax.grid(True)
     
     return fig
