@@ -111,7 +111,7 @@ def train_model(X_train, y_train, dataset_name, model_config, feature_name=None,
     if save_model:
         if feature_name:
             file_path = 'models/model_'
-            file_name = file_path + model_config["name"] + "_" + dataset_name + feature_name 
+            file_name = file_path + model_config["name"] + "_" + dataset_name + "_" + feature_name 
         else:
             file_path = 'models/model_'
             file_name = file_path + model_config["name"] + "_" + dataset_name

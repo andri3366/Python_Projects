@@ -35,3 +35,53 @@ def create_dummy_var(data_path):
     df.to_csv(f"data/processed/{file_name}", index=False)
     
     return df
+
+def streamlit_input(df, config, selected_display):
+    
+     # Loan Eligibility
+    if selected_display == "Loan Eligibility":
+
+        # Create dummy variables
+        df["Gender_Male"] = (df["Gender"] == "Male").astype(int)
+        df["Married_Yes"] = (df["Married"] == "Yes").astype(int)
+
+        df["Dependents_1"] = (df["Dependents"] == "1").astype(int)
+        df["Dependents_2"] = (df["Dependents"] == "2").astype(int)
+        df["Dependents_3+"] = (df["Dependents"] == "3+").astype(int)
+
+        df["Education_Not Graduate"] = (
+            df["Education"] == "Not Graduate"
+        ).astype(int)
+
+        df["Self_Employed_Yes"] = (
+            df["Self_Employed"] == "Yes"
+        ).astype(int)
+
+        df["Property_Area_Semiurban"] = (
+            df["Property_Area"] == "Semiurban"
+        ).astype(int)
+
+        df["Property_Area_Urban"] = (
+            df["Property_Area"] == "Urban"
+        ).astype(int)
+
+        # Remove original categorical columns
+        df.drop(
+            columns=[
+                "Gender",
+                "Married",
+                "Dependents",
+                "Education",
+                "Self_Employed",
+                "Property_Area",
+            ],
+            inplace=True,
+        )
+
+    for col in config["features"]:
+        if col not in df.columns:
+            df[col] = 0
+
+    df = df[config["features"]]
+
+    return df
