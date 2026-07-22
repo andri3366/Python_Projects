@@ -160,7 +160,7 @@ model_index = model_name.index(selected_model)
 
 
 # selected_model_config = model_config["models"][model_index]
-feature_suffix = model_config["target"][model_index]["name"]
+# feature_suffix = model_config["target"][model_index]["name"]
 # model_path = (
 #     f"models/model_{selected_model}_{problem}_{model_index}.pkl"
 # )
@@ -170,6 +170,7 @@ if selected_display in ["Real Estate", "Loan Eligibility", "UCLA Admission"]:
     model_path = f"models/model_{original_model_name}_{problem}_{model_index}.pkl"
 elif selected_display == "Mall Customers":
     original_model_name = model_config["models"][0]["name"]
+    feature_suffix = model_config["target"][model_index]["name"]
     model_path = f"models/model_{original_model_name}_{problem}_{feature_suffix}.pkl"
     
 try:
