@@ -1,3 +1,9 @@
+"""Model preparation and training utilities.
+
+This module contains shared train/test preparation, optional scaling,
+model factory mapping, and persistence helpers for trained estimators.
+"""
+
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression, LogisticRegression
@@ -9,6 +15,7 @@ import pickle
 import pandas as pd
 
 def train_lr(X, y, data):
+    """Train and save a baseline linear regression model."""
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=123)
     
@@ -25,6 +32,7 @@ def train_lr(X, y, data):
     return model, X_test, y_test
 
 def train_rf(X, y, data):
+    """Train and save a baseline random forest regressor model."""
     
     model = RandomForestRegressor(n_estimators=200, criterion='absolute_error')
 
@@ -50,7 +58,9 @@ models = {
     "KMeans" : KMeans,
     "MLPClassifier" : MLPClassifier
 }
+
 def prep_model(X, y, config):
+    """Split features/target and optionally scale training/test sets."""
     
     split_kwargs = config["train_test_split"].copy()
     
@@ -80,6 +90,7 @@ def prep_model(X, y, config):
     return X_train, X_test, y_train, y_test, scaler, X_scaled
 
 def prep_cluster(X, config):
+    """Scale clustering inputs when scaling is enabled in config."""
 
     scaler = None
 
@@ -95,6 +106,7 @@ def prep_cluster(X, config):
     return X, scaler
 
 def train_model(X_train, y_train, dataset_name, model_config, feature_name=None, save_model=True, model_index=None):
+    """Instantiate, fit, and optionally persist a configured model."""
     
     model_class = models[model_config["name"]]
     

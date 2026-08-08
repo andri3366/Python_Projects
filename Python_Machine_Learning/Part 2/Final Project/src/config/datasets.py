@@ -1,3 +1,9 @@
+"""Central dataset and model configuration registry.
+
+Each dataset entry defines file paths, target settings, preprocessing options,
+problem type, model list, and report plotting instructions.
+"""
+
 datasets = {
     "real_estate": {
         "raw_path": "data/raw/real_estate.csv",

@@ -1,8 +1,11 @@
+"""Model evaluation and validation utilities."""
+
 from sklearn.metrics import accuracy_score, confusion_matrix, mean_absolute_error
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
 
 def eval_model(model, X_test, y_test, problem_type):
+    """Evaluate a trained model using metrics by problem type."""
     
     y_pred = model.predict(X_test)
     
@@ -27,6 +30,7 @@ def eval_model(model, X_test, y_test, problem_type):
         )
         
 def cross_validate(model, X_train, y_train, model_config, problem_type):
+    """Run optional cross-validation when cv is configured for a model."""
     
     cv = model_config.get("cv")
     

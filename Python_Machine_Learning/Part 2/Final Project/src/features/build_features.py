@@ -1,8 +1,14 @@
+"""Feature engineering helpers for model training and Streamlit inference."""
+
 import pandas as pd
 import os 
 
-# Feature engineering
 def create_dummy_var(data_path):
+    """Create engineered features and one-hot encoded columns for a dataset.
+
+    Reads a cleaned dataset, applies dataset-specific feature steps, one-hot
+    encodes categorical variables, and writes the final dataset file.
+    """
     
     df = pd.read_csv(data_path)
         
@@ -10,11 +16,11 @@ def create_dummy_var(data_path):
     
     if file_name == "cleaned_real_estate.csv":
         
-        # domain knowledge
+        # Domain features based on known housing market patterns.
         df['popular']= ((df.beds == 2)&(df.baths == 2)).astype(int)
         df['recession'] = ((df.year_sold >= 2010) & (df.year_sold<=2013)).astype(int)
         
-        # interaction features
+        # Derived feature for property age.
         df['property_age'] = df.year_sold - df.year_built
         df.drop(index=df[df.property_age<0].index, inplace=True)
     
@@ -37,8 +43,9 @@ def create_dummy_var(data_path):
     return df
 
 def streamlit_input(df, config, selected_display):
+    """Transform Streamlit form input into model-ready feature columns."""
     
-     # Loan Eligibility
+    # Encode categorical fields to mirror training-time feature engineering.
     if selected_display == "Loan Eligibility":
 
         # Create dummy variables

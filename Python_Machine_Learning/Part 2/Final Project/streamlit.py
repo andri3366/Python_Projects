@@ -1,3 +1,9 @@
+"""Streamlit application for interactive predictions and clustering output.
+
+The app loads trained models from disk, renders dataset-specific input forms,
+transforms user input to training-compatible features, and returns predictions.
+"""
+
 import streamlit as st
 import pickle
 import pandas as pd
@@ -11,7 +17,10 @@ dataset_display_names = {
     "ucla_nn" : "UCLA Admission"
 }
 
+# Reverse lookup map used to fetch dataset configuration by UI label.
 display_to_dataset = {v: k for k, v in dataset_display_names.items()}
+
+# Input schema and final feature order expected by each model group.
 problem_features = {
     "Real Estate": {
         "input" : {
@@ -127,15 +136,10 @@ problem = display_to_dataset[selected_display]
 config = problem_features[selected_display]
 model_config = datasets[problem]
 
-
-# model_name = [
-#     model["name"]
-#     for model in model_config["models"]
-# ]
-
 model_name = []
 
 if problem == "mall_customers":
+    # Show feature-set variants because clustering models are saved per feature set.
     for target in model_config["target"]:
         feature_text = ", ".join(target["features"])
         display_name = f"KMeans ({feature_text})"
@@ -158,17 +162,12 @@ selected_model = st.selectbox(
 
 model_index = model_name.index(selected_model)
 
-
-# selected_model_config = model_config["models"][model_index]
-# feature_suffix = model_config["target"][model_index]["name"]
-# model_path = (
-#     f"models/model_{selected_model}_{problem}_{model_index}.pkl"
-# )
-
 if selected_display in ["Real Estate", "Loan Eligibility", "UCLA Admission"]:
+    # Supervised models are versioned by model index.
     original_model_name = model_config["models"][model_index]["name"]   
     model_path = f"models/model_{original_model_name}_{problem}_{model_index}.pkl"
 elif selected_display == "Mall Customers":
+    # Clustering models are versioned by feature-set suffix.
     original_model_name = model_config["models"][0]["name"]
     feature_suffix = model_config["target"][model_index]["name"]
     model_path = f"models/model_{original_model_name}_{problem}_{feature_suffix}.pkl"
@@ -266,7 +265,7 @@ if st.button("Predict", type="primary"):
         st.error("No features available for prediction.")
     else:
         try:
-            
+            # Input has been aligned to model feature columns at this point.
             prediction = model.predict(df)
             # st.write(df.columns.tolist())
             # st.write(df.iloc[0].to_dict())

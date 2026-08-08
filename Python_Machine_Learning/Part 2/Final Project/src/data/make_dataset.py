@@ -1,14 +1,25 @@
+"""Dataset loading and cleaning utilities.
+
+This module reads raw datasets, applies basic cleaning rules, and writes
+dataset-specific cleaned files into data/processed.
+"""
+
 import pandas as pd
 import os
 
 def load_and_preprocess_data(data_path):
+    """Load a dataset from disk, clean it, and persist its cleaned version.
+
+    The function applies shared cleaning steps (duplicates and missing values)
+    and then dataset-specific logic based on filename.
+    """
     
     df = pd.read_csv(data_path)
     
-    # handle duplicates
+    # Remove duplicate records before any downstream transformations.
     df.drop_duplicates(inplace=True)
     
-    # impute missing values
+    # Fill missing numeric values with median and categorical values with mode.
     for col in df.columns:
         
         if pd.api.types.is_numeric_dtype(df[col]):
@@ -16,7 +27,7 @@ def load_and_preprocess_data(data_path):
         else:
             df[col] = df[col].fillna(df[col].mode()[0])
             
-    # handle based on file
+    # Apply per-dataset cleaning rules.
     file_name = os.path.basename(data_path)
     
     if file_name == "real_estate.csv":

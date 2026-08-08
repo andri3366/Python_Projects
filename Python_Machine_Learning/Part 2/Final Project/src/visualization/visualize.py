@@ -1,3 +1,5 @@
+"""Visualization and PDF report generation utilities for all datasets."""
+
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import seaborn as sns
@@ -7,6 +9,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, silhouette_score
 from src.config.datasets import datasets
 
 def create_report(dataset_name, models, X, raw_df, processed_df, scaled_df):
+    """Create a multi-page PDF report for a supervised learning dataset."""
     
     config = datasets[dataset_name]
     pdf = PdfPages(f"{dataset_name}_report.pdf")
@@ -93,6 +96,7 @@ def create_report(dataset_name, models, X, raw_df, processed_df, scaled_df):
                     plt.close(fig)
                     
 def create_cluster_report(pdf, model, X, feature_name, n_clusters):
+    """Append cluster scatter visuals for two-feature clustering inputs."""
     
     if X.shape[1] == 2:
 
@@ -105,6 +109,7 @@ def create_cluster_report(pdf, model, X, feature_name, n_clusters):
         return None
 
 def create_cluster_metrics(pdf, cluster_range, inertia, sil, feature_name):
+    """Append elbow and silhouette metric plots for clustering diagnostics."""
 
     fig = elbow_plot(cluster_range, inertia, feature_name)
 
@@ -117,6 +122,7 @@ def create_cluster_metrics(pdf, cluster_range, inertia, sil, feature_name):
     plt.close(fig)
 
 def create_pair(r, df):
+    """Append a pairplot overview for exploratory clustering analysis."""
     
     g = sns.pairplot(df)
 
@@ -124,6 +130,7 @@ def create_pair(r, df):
     plt.close(g.figure)
 
 def cluster_scatter(X, labels, centers, feature_name, n_clusters):
+    """Build a scatter plot showing cluster assignments and centroids."""
     fig, ax = plt.subplots()
     
     sns.scatterplot(
@@ -142,6 +149,7 @@ def cluster_scatter(X, labels, centers, feature_name, n_clusters):
     return fig
 
 def elbow_plot(cluster_range, inertias, feature_name):
+    """Build an elbow plot from inertia values across candidate k values."""
 
     fig, ax = plt.subplots()
 
@@ -154,6 +162,7 @@ def elbow_plot(cluster_range, inertias, feature_name):
     return fig
 
 def silhouette_plot(cluster_range, silhouettes, feature_name):
+    """Build a silhouette score line plot across candidate k values."""
 
     fig, ax = plt.subplots()
 
@@ -166,6 +175,7 @@ def silhouette_plot(cluster_range, silhouettes, feature_name):
     return fig
 
 def plot_scatter(df, x, y, hue):
+    """Create a scatter plot with an optional hue grouping."""
     
     fig, ax = plt.subplots()
     
@@ -181,6 +191,7 @@ def plot_scatter(df, x, y, hue):
     return fig
     
 def plot_box(df, x, y=None):
+    """Create a one-variable or two-variable box plot."""
     
     fig, ax = plt.subplots()
     
@@ -197,6 +208,7 @@ def plot_box(df, x, y=None):
     return fig   
 
 def plot_hist(df, x):
+    """Create a histogram for a selected numeric feature."""
 
     fig, ax = plt.subplots()
     
@@ -207,6 +219,7 @@ def plot_hist(df, x):
     return fig
 
 def plot_corr_heatmap(df):
+    """Create a correlation heatmap for numeric columns."""
     
     fig, ax = plt.subplots()
     
@@ -217,6 +230,7 @@ def plot_corr_heatmap(df):
     return fig
 
 def single_bar(df, x):
+    """Create a count plot for a categorical feature."""
     
     fig, ax = plt.subplots()
     sns.countplot(data=df, x=x)
@@ -225,6 +239,7 @@ def single_bar(df, x):
     return fig
 
 def dist(og_df, scaled_df, x, compare_scaled=False):
+    """Create distribution plots and optionally compare scaled vs original."""
     
     
     if compare_scaled:
@@ -248,6 +263,7 @@ def dist(og_df, scaled_df, x, compare_scaled=False):
         ax.set_title(f"Original {x}")
     return fig
 def plot_feature_importance(model, X):
+    """Create a feature-importance bar chart for tree-based models."""
     
     fig, ax = plt.subplots()
     
@@ -264,6 +280,7 @@ def plot_feature_importance(model, X):
     return fig
 
 def plot_loss_curve(model, title):
+    """Create a neural-network training loss curve plot."""
     fig, ax = plt.subplots()
     
     ax.plot(model.loss_curve_, label='Loss', color='blue')
