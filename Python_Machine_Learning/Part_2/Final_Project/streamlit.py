@@ -9,6 +9,7 @@ import pickle
 import pandas as pd
 from src.config.datasets import datasets
 from src.features.build_features import streamlit_input
+from pathlib import Path
 
 dataset_display_names = {
     "real_estate" : "Real Estate",
@@ -162,15 +163,19 @@ selected_model = st.selectbox(
 
 model_index = model_name.index(selected_model)
 
+BASE_DIR = Path(__file__).resolve().parent
 if selected_display in ["Real Estate", "Loan Eligibility", "UCLA Admission"]:
     # Supervised models are versioned by model index.
     original_model_name = model_config["models"][model_index]["name"]   
-    model_path = f"models/model_{original_model_name}_{problem}_{model_index}.pkl"
+    # model_path = f"models/model_{original_model_name}_{problem}_{model_index}.pkl"
+    model_path = BASE_DIR / "models" / f"model_{original_model_name}_{problem}_{model_index}.pkl"
+
 elif selected_display == "Mall Customers":
     # Clustering models are versioned by feature-set suffix.
     original_model_name = model_config["models"][0]["name"]
     feature_suffix = model_config["target"][model_index]["name"]
-    model_path = f"models/model_{original_model_name}_{problem}_{feature_suffix}.pkl"
+    # model_path = f"models/model_{original_model_name}_{problem}_{feature_suffix}.pkl"
+    model_path = BASE_DIR / "models" / f"model_{original_model_name}_{problem}_{feature_suffix}.pkl"
     
 try:
     with open(model_path,"rb") as f:
@@ -267,8 +272,19 @@ if st.button("Predict", type="primary"):
         try:
             # Input has been aligned to model feature columns at this point.
             prediction = model.predict(df)
+
+            # Verify model columns 
+            # st.write("Features being sent to model:")
+            # st.write(df)
+            # st.write("Feature order:")
             # st.write(df.columns.tolist())
             # st.write(df.iloc[0].to_dict())
+
+
+            # print("Model expects:", model.n_features_in_)
+            # print("Data has:", df.shape[1])
+            # print("Columns:", df.columns.tolist())
+
             if selected_display in ["Loan Eligibility", "Real Estate", "UCLA Admission"]:
                 if prediction[0] == 1:
                     st.success("Approved!")
