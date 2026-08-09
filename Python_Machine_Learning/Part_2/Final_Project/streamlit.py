@@ -9,6 +9,7 @@ import pickle
 import pandas as pd
 from src.config.datasets import datasets
 from src.features.build_features import streamlit_input
+from src.models.train import load_model_artifact
 from pathlib import Path
 
 dataset_display_names = {
@@ -105,10 +106,10 @@ problem_features = {
         "input": {
             "GRE_Score" : "number",
             "TOEFL_Score" : "number",
-            "University_Rating" : ["1","2","3","4","5"],
             "SOP" : "number",
             "LOR" : "number",
             "CGPA" : "number",
+            "University_Rating" : ["1","2","3","4","5"],
             "Research" : ["0","1"],
             # "Admit_Chance"
         },
@@ -181,8 +182,7 @@ elif selected_display == "Mall Customers":
     model_path = BASE_DIR / "models" / f"model_{original_model_name}_{problem}_{feature_suffix}.pkl"
     
 try:
-    with open(model_path,"rb") as f:
-        model = pickle.load(f)
+    model, scaler = load_model_artifact(model_path)
 except FileNotFoundError:
     st.error(f"Model file not found: {model_path}")
     st.stop()
@@ -273,6 +273,14 @@ if st.button("Predict", type="primary"):
         st.error("No features available for prediction.")
     else:
         try:
+            if selected_display in ["Loan Eligibility", "UCLA Admission"] and scaler is not None:
+                feature_columns = df.columns.tolist()
+                df = pd.DataFrame(
+                    scaler.transform(df),
+                    columns=feature_columns,
+                    index=df.index
+                )
+
             # Input has been aligned to model feature columns at this point.
             prediction = model.predict(df)
 

@@ -62,7 +62,8 @@ if __name__ == "__main__":
                     y_train,
                     dataset_name,
                     model_config,
-                    model_index=i
+                    model_index=i,
+                    scaler=scaler
                 )
                 # model = train_model(X_train, y_train, dataset_name, model_config, model_index=i)
                 

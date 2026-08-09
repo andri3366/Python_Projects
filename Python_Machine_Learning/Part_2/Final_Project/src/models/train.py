@@ -135,7 +135,7 @@ def prep_cluster(X, config):
 
     return scaled_X, scaler
 
-def train_model(X_train, y_train, dataset_name, model_config, feature_name=None, save_model=True, model_index=None):
+def train_model(X_train, y_train, dataset_name, model_config, feature_name=None, save_model=True, model_index=None, scaler=None):
     """Instantiate, fit, and optionally persist a configured model."""
     
     model_class = models[model_config["name"]]
@@ -162,8 +162,21 @@ def train_model(X_train, y_train, dataset_name, model_config, feature_name=None,
             file_name += f"_{model_index}"
         
         file_name += ".pkl"
+        payload = final_model if scaler is None else {"model": final_model, "scaler": scaler}
         with open(file_name, 'wb') as f:
-            pickle.dump(final_model, f)
+            pickle.dump(payload, f)
         
     return final_model
+
+
+def load_model_artifact(file_path):
+    """Load a pickled model or a model-plus-scaler bundle."""
+
+    with open(file_path, "rb") as handle:
+        payload = pickle.load(handle)
+
+    if isinstance(payload, dict) and "model" in payload:
+        return payload["model"], payload.get("scaler")
+
+    return payload, None
     
