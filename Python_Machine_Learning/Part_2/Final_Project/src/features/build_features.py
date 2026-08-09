@@ -33,8 +33,10 @@ def create_dummy_var(data_path):
     if file_name == "cleaned_admission.csv":
         
         df = df.drop('Serial_No', axis=1)
-    cat_cols = df.select_dtypes(exclude=['number']).columns
-    df = pd.get_dummies(df, columns=cat_cols, drop_first=True).astype(int)
+        df = pd.get_dummies(df, columns=['University_Rating', 'Research'], drop_first=True).astype(int)
+    else:
+        cat_cols = df.select_dtypes(exclude=['number']).columns
+        df = pd.get_dummies(df, columns=cat_cols, drop_first=True).astype(int)
     
     file_name = file_name.replace("cleaned_", "final_")
     
@@ -85,6 +87,22 @@ def streamlit_input(df, config, selected_display):
             inplace=True,
         )
 
+    if selected_display == "UCLA Admission":
+        df["University_Rating_2"] = (df["University_Rating"] == "2").astype(int)
+        df["University_Rating_3"] = (df["University_Rating"] == "3").astype(int)
+        df["University_Rating_4"] = (df["University_Rating"] == "4").astype(int)
+        df["University_Rating_5"] = (df["University_Rating"] == "5").astype(int)
+
+        df["Research_1"] = (df["Research"] == "1").astype(int)
+
+        # Remove original categorical columns
+        df.drop(
+            columns=[
+                "Research",
+                "University_Rating"
+            ],
+            inplace=True,
+        )
     for col in config["features"]:
         if col not in df.columns:
             df[col] = 0

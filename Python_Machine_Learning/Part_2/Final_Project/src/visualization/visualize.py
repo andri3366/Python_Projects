@@ -1,9 +1,14 @@
 """Visualization and PDF report generation utilities for all datasets."""
 
+from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import seaborn as sns
 import numpy as np
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+REPORTS_DIR = PROJECT_ROOT / "reports"
+REPORTS_DIR.mkdir(exist_ok=True)
 
 from sklearn.metrics import accuracy_score, confusion_matrix, silhouette_score
 from src.config.datasets import datasets
@@ -12,7 +17,7 @@ def create_report(dataset_name, models, X, raw_df, processed_df, scaled_df):
     """Create a multi-page PDF report for a supervised learning dataset."""
     
     config = datasets[dataset_name]
-    pdf = PdfPages(f"{dataset_name}_report.pdf")
+    pdf = PdfPages(str(REPORTS_DIR / f"{dataset_name}_report.pdf"))
         
     with pdf as r:
             print(f"Saving: reports/{dataset_name}")
@@ -91,7 +96,7 @@ def create_report(dataset_name, models, X, raw_df, processed_df, scaled_df):
                     
                 if hasattr(model, "loss_curve_"):
                     print("Plotting loss curve")
-                    fig = plot_loss_curve(model, title=f"Activation: {model_config["kwargs"].get('activation', 'relu')}")
+                    fig = plot_loss_curve(model, title=f"Activation: {model_config.get('kwargs', {}).get('activation', 'relu')}")
                     r.savefig(fig)
                     plt.close(fig)
                     

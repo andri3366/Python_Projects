@@ -140,7 +140,7 @@ datasets = {
         "models" : [
             {
                 "name" : "KMeans",
-                "clusters" : [3,5],
+                "clusters" : [3],
                 "cluster_range" : [3,9],
                 "kwargs" : {}
             }

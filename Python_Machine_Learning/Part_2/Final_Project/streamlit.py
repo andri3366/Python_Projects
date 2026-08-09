@@ -105,21 +105,24 @@ problem_features = {
         "input": {
             "GRE_Score" : "number",
             "TOEFL_Score" : "number",
-            "University_Rating" : "number",
+            "University_Rating" : ["1","2","3","4","5"],
             "SOP" : "number",
             "LOR" : "number",
             "CGPA" : "number",
-            "Research" : [0,1],
+            "Research" : ["0","1"],
             # "Admit_Chance"
         },
         "features": [
             "GRE_Score",
             "TOEFL_Score",
-            "University_Rating",
             "SOP",
             "LOR",
             "CGPA",
-            "Research",
+            "University_Rating_2",
+            "University_Rating_3",
+            "University_Rating_4",
+            "University_Rating_5",
+            "Research_1",
             # "Admit_Chance"
         ]
     }
@@ -249,7 +252,7 @@ if selected_display == "UCLA Admission":
                 user_input[feature] = st.number_input(feature.replace("_", " "), min_value=290, max_value=340, step=5)
             if feature in ["TOEFL_Score"]:
                 user_input[feature] = st.number_input(feature.replace("_", " "), min_value=92, max_value=120, step=1)
-            if feature in ["University_Rating", "SOP", "LOR"]:
+            if feature in ["SOP", "LOR"]:
                 user_input[feature] = st.number_input(feature.replace("_", " "), min_value=1, max_value=5, step=1)
             if feature in ["CGPA"]:
                 user_input[feature] = st.number_input(feature.replace("_", " "), min_value=6.8, max_value=10.0, step=0.1, format="%.1f")
@@ -273,7 +276,7 @@ if st.button("Predict", type="primary"):
             # Input has been aligned to model feature columns at this point.
             prediction = model.predict(df)
 
-            # Verify model columns 
+            # # Verify model columns 
             # st.write("Features being sent to model:")
             # st.write(df)
             # st.write("Feature order:")

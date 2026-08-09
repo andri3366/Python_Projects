@@ -14,7 +14,12 @@ from src.visualization.visualize import create_report, plot_feature_importance, 
 from sklearn.metrics import silhouette_score
 from matplotlib.backends.backend_pdf import PdfPages
 
+from pathlib import Path
 import pandas as pd
+
+PROJECT_ROOT = Path(__file__).resolve().parent
+REPORTS_DIR = PROJECT_ROOT / "reports"
+REPORTS_DIR.mkdir(exist_ok=True)
 
 if __name__ == "__main__":
     # Iterate through all dataset pipelines defined in src/config/datasets.py.
@@ -38,33 +43,49 @@ if __name__ == "__main__":
             y = df[config["target"]]
             
             # Stage 3: split data and apply optional scaling.
-            X_train, X_test, y_train, y_test, scaler, X_scaled = prep_model(X,y,config)
+            X_train, X_test, y_train, y_test, scaler, X_train_scaled, X_test_scaled = prep_model(X,y,config)
 
             trained_models = []
             
             # Stage 4: train all configured models and log evaluation metrics.
             for i, model_config in enumerate(config["models"]):
                 
-                
-                model = train_model(X_train, y_train, dataset_name, model_config, model_index=i)
+                if config.get("scale"):
+                    train_data = X_train_scaled
+                    test_data = X_test_scaled
+                else:
+                    train_data = X_train
+                    test_data = X_test
+
+                model = train_model(
+                    train_data,
+                    y_train,
+                    dataset_name,
+                    model_config,
+                    model_index=i
+                )
+                # model = train_model(X_train, y_train, dataset_name, model_config, model_index=i)
                 
                 trained_models.append(model)
                 
-                metric = eval_model(model, X_test, y_test, config["problem_type"])
+                # metric = eval_model(model, X_test, y_test, config["problem_type"])
+                metric = eval_model(model, test_data, y_test, config["problem_type"])
                 print(f"{type(model).__name__} Metrics: {metric}")
                 
-                cv_score = cross_validate(model, X_train, y_train, model_config, config["problem_type"])
+                # cv_score = cross_validate(model, X_train, y_train, model_config, config["problem_type"])
+                cv_score = cross_validate(model, train_data, y_train, model_config, config["problem_type"])
                 if cv_score is not None:
                     print(f"{type(model).__name__} CV Score: {cv_score}")
 
             # Stage 5: export EDA/model visualizations into a PDF report.
-            create_report(dataset_name, trained_models, X, eda, df, X_scaled)
+            # create_report(dataset_name, trained_models, X, eda, df, X_scaled)
+            create_report(dataset_name, trained_models, X, eda, df, X_train_scaled)
 
         elif config["problem_type"] == "clustering":
 
             df = pd.read_csv(config["cleaned_path"])
 
-            pdf = PdfPages(f"{dataset_name}_report.pdf")
+            pdf = PdfPages(str(REPORTS_DIR / f"{dataset_name}_report.pdf"))
         
             with pdf as r:
 
@@ -73,14 +94,14 @@ if __name__ == "__main__":
 
                 for feature_set in config["target"]:
 
-                    print(f"Feature Set: {feature_set["name"]}")
+                    print(f"Feature Set: {feature_set['name']}")
 
                     feature_name = feature_set["name"]
                     X = df[feature_set["features"]]
 
                     if config["scale"]:
                         X_cluster, scaler = prep_cluster(X, config)
-                    else :
+                    else:
                         X_cluster = X
 
                     # Evaluate candidate k values before saving final cluster models.
@@ -94,6 +115,8 @@ if __name__ == "__main__":
                         K = []
                         WCSS = []
                         SIL = []
+                        best_k = None
+                        best_silhouette = -1
 
                         for k in range(start, stop):
 
@@ -103,24 +126,38 @@ if __name__ == "__main__":
                                 "n_clusters" : k
                             }
 
-                            test_model = train_model(X_cluster, None, dataset_name, test_config, feature_name, save_model=False)                       
+                            test_model = train_model(X_cluster, None, dataset_name, test_config, feature_name, save_model=False)
 
                             K.append(k)
 
                             WCSS.append(test_model.inertia_)
-                            SIL.append(silhouette_score(X_cluster, test_model.labels_))
+                            score = silhouette_score(X_cluster, test_model.labels_)
+                            SIL.append(score)
 
-                        
+                            if score > best_silhouette:
+                                best_silhouette = score
+                                best_k = k
+
                         create_cluster_metrics(r, K, WCSS, SIL, feature_name)
 
-                        for n_clusters in model_config["clusters"]:
-                            
+                        print(f"Best k for {feature_name}: {best_k} (silhouette={best_silhouette:.3f})")
+
+                        # Use the best-performing cluster count for persisted models.
+                        save_config = model_config.copy()
+                        save_config["kwargs"] = {
+                            **model_config.get("kwargs", {}),
+                            "n_clusters": best_k
+                        }
+                        train_model(X_cluster, None, dataset_name, save_config, feature_name)
+
+                        # Use the configured cluster counts for visualizations.
+                        for n_clusters in model_config.get("clusters", [best_k]):
                             current_config = model_config.copy()
                             current_config["kwargs"] = {
                                 **model_config.get("kwargs", {}),
                                 "n_clusters" : n_clusters
                             }
-                            model = train_model(X_cluster, None, dataset_name, current_config, feature_name)
+                            model = train_model(X_cluster, None, dataset_name, current_config, feature_name, save_model=False)
 
                             print("Done KMeans")
                             create_cluster_report(r, model, X_cluster, feature_name, n_clusters)

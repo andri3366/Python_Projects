@@ -70,7 +70,9 @@ def prep_model(X, y, config):
     X_train, X_test, y_train, y_test = train_test_split(X, y, **split_kwargs)
 
     scaler = None
-    X_scaled = None
+    X_train_scaled = None
+    X_test_scaled = None
+    # X_scaled = None
     
     if config.get("scale") :
         
@@ -79,20 +81,45 @@ def prep_model(X, y, config):
         else:
             scaler = MinMaxScaler()
             
-        X_train = scaler.fit_transform(X_train)
-        X_test = scaler.transform(X_test)
+        # X_train = scaler.fit_transform(X_train)
+        # X_test = scaler.transform(X_test)
         
-        X_scaled = pd.DataFrame(
-            X_train,
-            columns=X.columns
+        # X_scaled = pd.DataFrame(
+        #     X_train,
+        #     columns=X.columns
+        # )
+        
+        # Fit ONLY on training data
+        X_train_scaled = pd.DataFrame(
+            scaler.fit_transform(X_train),
+            columns=X_train.columns,
+            index=X_train.index
         )
+
+        # Apply the already-fitted scaler to test data
+        X_test_scaled = pd.DataFrame(
+            scaler.transform(X_test),
+            columns=X_test.columns,
+            index=X_test.index
+        )
+
+    return (
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+        scaler,
+        X_train_scaled,
+        X_test_scaled
+    )
         
-    return X_train, X_test, y_train, y_test, scaler, X_scaled
+    # return X_train, X_test, y_train, y_test, scaler, X_scaled
 
 def prep_cluster(X, config):
     """Scale clustering inputs when scaling is enabled in config."""
 
     scaler = None
+    scaled_X = X.copy()
 
     if config.get("scale"):
 
@@ -100,10 +127,13 @@ def prep_cluster(X, config):
             scaler = StandardScaler()
         else:
             scaler = MinMaxScaler()
-        
-    X = scaler.fit_transform()
 
-    return X, scaler
+        scaled_X = pd.DataFrame(
+            scaler.fit_transform(X),
+            columns=X.columns
+        )
+
+    return scaled_X, scaler
 
 def train_model(X_train, y_train, dataset_name, model_config, feature_name=None, save_model=True, model_index=None):
     """Instantiate, fit, and optionally persist a configured model."""
@@ -135,5 +165,5 @@ def train_model(X_train, y_train, dataset_name, model_config, feature_name=None,
         with open(file_name, 'wb') as f:
             pickle.dump(final_model, f)
         
-    return model
+    return final_model
     
