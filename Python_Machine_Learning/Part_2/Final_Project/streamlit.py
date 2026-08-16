@@ -309,7 +309,3 @@ if st.button("Predict", type="primary"):
             
         except Exception as e:
             st.error(f"Error Making Prediction: {str(e)}")
-
-if st.button("Reset Inputs"):
-    st.rerun()
-    
